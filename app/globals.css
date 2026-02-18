@@ -1,15 +1,88 @@
 @import "tailwindcss";
 
 :root {
+  /* Green color palette - 50 to 950 */
+  --green-50: #f0fdf4;
+  --green-100: #dcfce7;
+  --green-200: #bbf7d0;
+  --green-300: #86efac;
+  --green-400: #4ade80;
+  --green-500: #22c55e;
+  --green-600: #16a34a;
+  --green-700: #15803d;
+  --green-800: #166534;
+  --green-900: #14532d;
+  --green-950: #052e16;
+
+  /* White color palette - 50 to 900 */
+  --white-50: #fafafa;
+  --white-100: #f5f5f5;
+  --white-200: #e5e5e5;
+  --white-300: #d4d4d4;
+  --white-400: #a3a3a3;
+  --white-500: #737373;
+  --white-600: #525252;
+  --white-700: #404040;
+  --white-800: #262626;
+  --white-900: #171717;
+
+  /* Black color palette - 50 to 900 */
+  --black-50: #ffffff;
+  --black-100: #fcfcfc;
+  --black-200: #f8f8f8;
+  --black-300: #f0f0f0;
+  --black-400: #e0e0e0;
+  --black-500: #c0c0c0;
+  --black-600: #a0a0a0;
+  --black-700: #808080;
+  --black-800: #606060;
+  --black-900: #404040;
+
   --background: #ffffff;
   --foreground: #171717;
 }
 
 @theme inline {
+  /* Green colors */
+  --color-green-50: var(--green-50);
+  --color-green-100: var(--green-100);
+  --color-green-200: var(--green-200);
+  --color-green-300: var(--green-300);
+  --color-green-400: var(--green-400);
+  --color-green-500: var(--green-500);
+  --color-green-600: var(--green-600);
+  --color-green-700: var(--green-700);
+  --color-green-800: var(--green-800);
+  --color-green-900: var(--green-900);
+  --color-green-950: var(--green-950);
+
+  /* White colors */
+  --color-white-50: var(--white-50);
+  --color-white-100: var(--white-100);
+  --color-white-200: var(--white-200);
+  --color-white-300: var(--white-300);
+  --color-white-400: var(--white-400);
+  --color-white-500: var(--white-500);
+  --color-white-600: var(--white-600);
+  --color-white-700: var(--white-700);
+  --color-white-800: var(--white-800);
+  --color-white-900: var(--white-900);
+
+  /* Black colors */
+  --color-black-50: var(--black-50);
+  --color-black-100: var(--black-100);
+  --color-black-200: var(--black-200);
+  --color-black-300: var(--black-300);
+  --color-black-400: var(--black-400);
+  --color-black-500: var(--black-500);
+  --color-black-600: var(--black-600);
+  --color-black-700: var(--black-700);
+  --color-black-800: var(--black-800);
+  --color-black-900: var(--black-900);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-open-sans);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +95,5 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-open-sans), Arial, Helvetica, sans-serif;
 }
