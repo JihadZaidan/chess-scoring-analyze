@@ -27,6 +27,7 @@ export default function Home() {
   const [analysis, setAnalysis] = useState<AIMoveSuggestion | undefined>(undefined);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [gamePGN, setGamePGN] = useState<string>('');
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const ai = new GeminiChessAI();
   const lichessAPI = new LichessAPI();
@@ -221,28 +222,30 @@ export default function Home() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-800 text-white">
-      <header className="flex items-center justify-between p-4 bg-gray-900 shadow-md">
-        <div className="flex items-center space-x-4">
+      <header className="flex flex-col sm:flex-row items-center justify-between p-3 sm:p-4 bg-gray-900 shadow-md gap-2 sm:gap-0">
+        <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
           {user ? (
             <>
-              <span className="text-sm">Logged in as {user.username} ({user.platform})</span>
-              <button
-                onClick={handleLogout}
-                className="px-3 py-1 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors"
-              >
-                Logout
-              </button>
-              <button
-                onClick={handleClearBoard}
-                className="px-4 py-2 bg-red-600 rounded-md hover:bg-red-700 transition-colors"
-              >
-                Clear Board
-              </button>
+              <span className="text-xs sm:text-sm text-center sm:text-left">Logged in as {user.username} ({user.platform})</span>
+              <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+                <button
+                  onClick={handleLogout}
+                  className="px-2 sm:px-3 py-1 bg-red-600 text-white text-xs sm:text-sm rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Logout
+                </button>
+                <button
+                  onClick={handleClearBoard}
+                  className="px-2 sm:px-3 py-1 sm:py-2 bg-red-600 text-white text-xs sm:text-sm rounded-md hover:bg-red-700 transition-colors"
+                >
+                  Clear Board
+                </button>
+              </div>
             </>
           ) : (
             <button
               onClick={() => router.push('/login')}
-              className="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+              className="px-3 sm:px-4 py-1 sm:py-2 bg-blue-600 text-white text-xs sm:text-sm rounded-md hover:bg-blue-700 transition-colors w-full sm:w-auto"
             >
               Login
             </button>
@@ -250,9 +253,20 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="flex flex-1 overflow-hidden">
-        <div className="w-1/2 p-4 border-r border-gray-800 bg-gray-900 overflow-y-auto">
-          <h2 className="text-xl font-bold mb-4 text-white">Chess Board</h2>
+      <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
+        <div className="w-full lg:w-1/2 p-2 sm:p-4 lg:border-r lg:border-gray-800 bg-gray-900 overflow-y-auto relative">
+          <div className="flex justify-between items-center mb-2 sm:mb-4">
+            <h2 className="text-lg sm:text-xl font-bold text-white">Chess Board</h2>
+            <button
+              onClick={() => setIsChatOpen(!isChatOpen)}
+              className="lg:hidden px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+              {isChatOpen ? 'Close' : 'Chat'}
+            </button>
+          </div>
           <ChessBoardComponent
             onMove={handleChessMove}
             onAnalysisRequest={async (fen: string) => {
@@ -275,25 +289,25 @@ export default function Home() {
           />
         </div>
 
-        <div className="w-1/2 flex flex-col h-full">
-          <div className="bg-gray-900 border-b border-gray-800 p-4 flex-shrink-0">
-            <div className="flex justify-between items-center">
-              <div>
-                <h1 className="text-xl font-semibold text-white">Chess Analysis Assistant</h1>
-                <p className="text-sm text-gray-400">AI-powered chess analysis</p>
+        <div className={`w-full lg:w-1/2 flex flex-col h-full bg-gray-900 transition-all duration-300 ease-in-out ${isChatOpen ? 'block' : 'hidden lg:block'}`}>
+          <div className="bg-gray-900 border-b border-gray-800 p-3 sm:p-4 flex-shrink-0">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+              <div className="text-center sm:text-left">
+                <h1 className="text-lg sm:text-xl font-semibold text-white">Chess Analysis Assistant</h1>
+                <p className="text-xs sm:text-sm text-gray-400">AI-powered chess analysis</p>
                 {user && (
-                  <div className="flex items-center mt-2 space-x-2">
-                    <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
+                  <div className="flex items-center mt-2 space-x-2 justify-center sm:justify-start">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gray-700 rounded-full flex items-center justify-center">
                       {user.avatar ? (
-                        <img src={user.avatar} alt={user.username} className="w-8 h-8 rounded-full" />
+                        <img src={user.avatar} alt={user.username} className="w-6 h-6 sm:w-8 sm:h-8 rounded-full" />
                       ) : (
-                        <span className="text-xs text-white font-bold">
+                        <span className="text-xs sm:text-sm text-white font-bold">
                           {user.username.charAt(0).toUpperCase()}
                         </span>
                       )}
                     </div>
                     <div>
-                      <p className="text-sm text-white font-medium">
+                      <p className="text-xs sm:text-sm text-white font-medium">
                         {user.name || user.username}
                       </p>
                       <p className="text-xs text-gray-400">
@@ -303,32 +317,40 @@ export default function Home() {
                   </div>
                 )}
               </div>
+              <button
+                onClick={() => setIsChatOpen(false)}
+                className="lg:hidden p-2 text-gray-400 hover:text-white transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
+          <div className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-3 sm:space-y-4 min-h-0">
             {messages.map((msg, index) => (
               <div
                 key={index}
                 className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-xs px-4 py-2 rounded-lg ${msg.role === 'user' ? 'bg-blue-600' : 'bg-gray-600'}`}
+                  className={`max-w-[85%] sm:max-w-xs px-3 py-2 sm:px-4 rounded-lg text-xs sm:text-sm ${msg.role === 'user' ? 'bg-blue-600' : 'bg-gray-600'}`}
                 >
-                  <div className="whitespace-pre-wrap">{msg.content}</div>
+                  <div className="whitespace-pre-wrap break-words">{msg.content}</div>
                 </div>
               </div>
             ))}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="max-w-xs px-4 py-2 rounded-lg bg-gray-600">
+                <div className="max-w-[85%] sm:max-w-xs px-3 py-2 sm:px-4 rounded-lg bg-gray-600">
                   <div className="dot-pulse"></div>
                 </div>
               </div>
             )}
           </div>
 
-          <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} className="p-4 border-t border-gray-600 flex-shrink-0">
+          <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} className="p-2 sm:p-4 border-t border-gray-600 flex-shrink-0">
             <div className="flex items-center space-x-2">
               <input
                 type="text"
@@ -336,20 +358,25 @@ export default function Home() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                 placeholder="Ask me about chess, import games, or request analysis..."
-                className="flex-1 p-2 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-800 text-white placeholder-gray-400"
+                className="flex-1 p-2 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-800 text-white placeholder-gray-400 text-xs sm:text-sm"
                 disabled={isLoading}
               />
               <button
                 onClick={handleSendMessage}
                 disabled={isLoading || !input.trim()}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-2 sm:px-4 py-2 bg-green-600 text-white text-xs sm:text-sm rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
               >
                 Send
               </button>
             </div>
           </form>
-          <div className="p-2 text-xs text-gray-500 flex-shrink-0">
-            Try: "Import games from chess.com username", "Import games from lichess username", "My games", "Analyze position", "FEN string", "Chess.com game link", or make a move on the board
+          <div className="p-2 text-xs text-gray-500 flex-shrink-0 text-center">
+            <div className="hidden sm:block">
+              Try: "Import games from chess.com username", "Import games from lichess username", "My games", "Analyze position", "FEN string", "Chess.com game link", or make a move on the board
+            </div>
+            <div className="sm:hidden">
+              Import games • Analyze position • FEN string • Make moves
+            </div>
           </div>
         </div>
       </div>

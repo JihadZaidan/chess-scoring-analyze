@@ -208,81 +208,83 @@ export default function ChessBoardComponent({
   }, [analysis, game, selectedSquare]);
 
   return (
-    <div className="flex flex-col items-center space-y-4">
-      <div className="relative">
-        <Chessboard
-          options={{
-            position: position,
-            boardOrientation: boardOrientation,
-            showNotation: showCoordinates,
-            allowDragging: true,
-            allowDrawingArrows: true,
-            arrows: arrows.map(arrow => ({
-              startSquare: arrow.from,
-              endSquare: arrow.to,
-              color: arrow.color
-            })),
-            squareStyles: getCustomSquareStyles(),
-            onPieceDrop: ({ piece, sourceSquare, targetSquare }) => {
-              console.log('onPieceDrop called:', { piece, sourceSquare, targetSquare });
-              if (!targetSquare) return false;
-              return onDrop(sourceSquare, targetSquare);
-            },
-            onSquareClick: ({ piece, square }) => {
-              console.log('onSquareClick called:', { piece, square });
-              
-              if (selectedSquare === null) {
-                // First click - select piece
-                if (piece) {
-                  setSelectedSquare(square);
-                }
-              } else {
-                // Second click - try to move
-                if (selectedSquare === square) {
-                  // Clicking same square - deselect
-                  setSelectedSquare(null);
-                } else if (onDrop(selectedSquare, square)) {
-                  // Valid move
-                  setSelectedSquare(null);
+    <div className="flex flex-col items-center space-y-3 sm:space-y-4 w-full max-w-full">
+      <div className="relative w-full max-w-[350px] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[600px]">
+        <div className="aspect-square">
+          <Chessboard
+            options={{
+              position: position,
+              boardOrientation: boardOrientation,
+              showNotation: showCoordinates,
+              allowDragging: true,
+              allowDrawingArrows: true,
+              arrows: arrows.map(arrow => ({
+                startSquare: arrow.from,
+                endSquare: arrow.to,
+                color: arrow.color
+              })),
+              squareStyles: getCustomSquareStyles(),
+              onPieceDrop: ({ piece, sourceSquare, targetSquare }) => {
+                console.log('onPieceDrop called:', { piece, sourceSquare, targetSquare });
+                if (!targetSquare) return false;
+                return onDrop(sourceSquare, targetSquare);
+              },
+              onSquareClick: ({ piece, square }) => {
+                console.log('onSquareClick called:', { piece, square });
+                
+                if (selectedSquare === null) {
+                  // First click - select piece
+                  if (piece) {
+                    setSelectedSquare(square);
+                  }
                 } else {
-                  // Invalid move, just select new square if it has a piece
-                  setSelectedSquare(piece ? square : null);
+                  // Second click - try to move
+                  if (selectedSquare === square) {
+                    // Clicking same square - deselect
+                    setSelectedSquare(null);
+                  } else if (onDrop(selectedSquare, square)) {
+                    // Valid move
+                    setSelectedSquare(null);
+                  } else {
+                    // Invalid move, just select new square if it has a piece
+                    setSelectedSquare(piece ? square : null);
+                  }
                 }
+              },
+              canDragPiece: ({ isSparePiece, piece, square }) => {
+                console.log('canDragPiece called:', { isSparePiece, piece, square, turn: game.turn() });
+                if (!piece) return false;
+                // Simple check - allow dragging any piece for now
+                return true;
               }
-            },
-            canDragPiece: ({ isSparePiece, piece, square }) => {
-              console.log('canDragPiece called:', { isSparePiece, piece, square, turn: game.turn() });
-              if (!piece) return false;
-              // Simple check - allow dragging any piece for now
-              return true;
-            }
-          }}
-        />
+            }}
+          />
+        </div>
         
         {isAnalyzing && (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
-            <div className="text-white text-lg font-semibold">Analyzing...</div>
+            <div className="text-white text-sm sm:text-lg font-semibold px-2 text-center">Analyzing...</div>
           </div>
         )}
       </div>
 
-      <div className="flex space-x-2">
+      <div className="flex flex-wrap gap-2 justify-center">
         <button
           onClick={resetGame}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+          className="px-3 py-1 sm:px-4 sm:py-2 bg-green-600 text-white text-xs sm:text-sm rounded-lg hover:bg-green-700 transition-colors"
         >
           New Game
         </button>
         <button
           onClick={undoMove}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+          className="px-3 py-1 sm:px-4 sm:py-2 bg-green-600 text-white text-xs sm:text-sm rounded-lg hover:bg-green-700 transition-colors"
           disabled={game.history().length === 0}
         >
           Undo
         </button>
         <button
           onClick={() => onAnalysisRequest?.(game.fen())}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+          className="px-3 py-1 sm:px-4 sm:py-2 bg-green-600 text-white text-xs sm:text-sm rounded-lg hover:bg-green-700 transition-colors"
           disabled={isAnalyzing}
         >
           Analyze Position
@@ -290,9 +292,9 @@ export default function ChessBoardComponent({
       </div>
 
       {analysis && Object.keys(analysis).length > 0 && (
-        <div className="w-full max-w-md p-4 bg-gray-800 rounded-lg shadow-lg border border-gray-700">
-          <h3 className="font-semibold text-lg mb-2 text-white">AI Analysis</h3>
-          <div className="space-y-2 text-sm text-gray-300">
+        <div className="w-full max-w-full sm:max-w-md p-3 sm:p-4 bg-gray-800 rounded-lg shadow-lg border border-gray-700">
+          <h3 className="font-semibold text-base sm:text-lg mb-2 text-white">AI Analysis</h3>
+          <div className="space-y-2 text-xs sm:text-sm text-gray-300">
             <div>
               <span className="font-medium text-white">Best Move:</span> {analysis.move}
             </div>
@@ -308,7 +310,7 @@ export default function ChessBoardComponent({
             </div>
             <div>
               <span className="font-medium text-white">Reasoning:</span>
-              <p className="mt-1 text-gray-400">{analysis.reasoning}</p>
+              <p className="mt-1 text-gray-400 text-xs sm:text-sm break-words">{analysis.reasoning}</p>
             </div>
             
             {analysis.patterns && analysis.patterns.length > 0 && (
@@ -318,7 +320,7 @@ export default function ChessBoardComponent({
                   {analysis.patterns.map((pattern, index) => (
                     <span
                       key={index}
-                      className="px-2 py-1 bg-green-900 text-green-300 rounded-full text-xs"
+                      className="px-1 sm:px-2 py-1 bg-green-900 text-green-300 rounded-full text-xs"
                     >
                       {pattern}
                     </span>
@@ -333,7 +335,7 @@ export default function ChessBoardComponent({
                 <div className="mt-1 space-y-1">
                   {analysis.alternatives.map((alt, index) => (
                     <div key={index} className="flex justify-between text-xs">
-                      <span className="text-gray-300">{alt.move}</span>
+                      <span className="text-gray-300 break-words mr-2">{alt.move}</span>
                       <span className={alt.evaluation > 0 ? 'text-green-400' : alt.evaluation < 0 ? 'text-red-400' : 'text-gray-400'}>
                         {alt.evaluation > 0 ? '+' : ''}{alt.evaluation}
                       </span>
@@ -349,12 +351,12 @@ export default function ChessBoardComponent({
                 <div className="mt-1 space-y-1">
                   {analysis.theoreticalMoves.map((move, index) => (
                     <div key={index} className="text-xs">
-                      <div className="flex justify-between items-center">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
                         <span className="text-blue-300 font-medium">{move.move}</span>
                         <span className="text-gray-400">{move.frequency}%</span>
                       </div>
                       <div className="text-gray-500">{move.name}</div>
-                      <div className="text-gray-600">{move.description}</div>
+                      <div className="text-gray-600 break-words">{move.description}</div>
                     </div>
                   ))}
                 </div>
@@ -366,7 +368,7 @@ export default function ChessBoardComponent({
                 <span className="font-medium text-white">Book Moves:</span>
                 <div className="mt-1 space-y-1">
                   {analysis.bookMoves.map((move, index) => (
-                    <div key={index} className="flex justify-between items-center text-xs">
+                    <div key={index} className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 text-xs">
                       <span className="text-green-300">{move.move}</span>
                       <div className="text-right">
                         <div className="text-gray-400">{move.source}</div>
