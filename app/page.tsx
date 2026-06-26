@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import ChessBoardComponent from '@/components/ChessBoard';
 import { GeminiChessAI } from '@/lib/gemini-chess-ai';
@@ -28,6 +28,7 @@ export default function Home() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [gamePGN, setGamePGN] = useState<string>('');
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   const ai = new GeminiChessAI();
   const lichessAPI = new LichessAPI();
@@ -41,6 +42,11 @@ export default function Home() {
       router.push('/login');
     }
   }, [router]);
+
+  // Auto-scroll to the latest message
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isLoading]);
 
   const handleLogout = () => {
     localStorage.removeItem('chessUser');
@@ -367,6 +373,7 @@ export default function Home() {
                 </div>
               </div>
             )}
+            <div ref={chatEndRef} />
           </div>
 
           <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} className="p-2 sm:p-4 border-t border-gray-600 flex-shrink-0">
