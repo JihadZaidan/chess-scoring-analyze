@@ -23,7 +23,7 @@ export default function Home() {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [currentFen, setCurrentFen] = useState('rnbqkbnr/pppppppp/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
+  const [currentFen, setCurrentFen] = useState('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
   const [analysis, setAnalysis] = useState<AIMoveSuggestion | undefined>(undefined);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [gamePGN, setGamePGN] = useState<string>('');
@@ -101,13 +101,13 @@ export default function Home() {
                   response = `Chess.com ${gameType} game loaded:\n• Game ID: ${gameId}\n• White: ${game.white?.username || 'Unknown'}\n• Black: ${game.black?.username || 'Unknown'}\n• Time Control: ${game.time_class || 'Unknown'}\n• Rated: ${game.rated ? 'Yes' : 'No'}\n• Current position loaded on board\n\nYou can now analyze or continue from this position.`;
                 } catch (fenError) {
                   console.warn('Invalid FEN from PGN, using default position:', fenError);
-                  setCurrentFen('rnbqkbnr/pppppppp/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
+                  setCurrentFen('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
                   setGamePGN(pgn);
                   response = `Chess.com ${gameType} game loaded (with default starting position):\n• Game ID: ${gameId}\n• White: ${game.white?.username || 'Unknown'}\n• Black: ${game.black?.username || 'Unknown'}\n• Time Control: ${game.time_class || 'Unknown'}\n• Rated: ${game.rated ? 'Yes' : 'No'}\n• PGN loaded but position reset to start\n\nYou can now analyze or continue from this position.`;
                 }
               } catch (pgnError) {
                 console.warn('Failed to load PGN:', pgnError);
-                setCurrentFen('rnbqkbnr/pppppppp/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
+                setCurrentFen('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
                 setGamePGN(pgn);
                 response = `Chess.com ${gameType} game loaded (PGN parsing failed):\n• Game ID: ${gameId}\n• White: ${game.white?.username || 'Unknown'}\n• Black: ${game.black?.username || 'Unknown'}\n• Time Control: ${game.time_class || 'Unknown'}\n• Rated: ${game.rated ? 'Yes' : 'No'}\n• PGN available but position reset to start\n\nYou can now analyze or continue from this position.`;
               }
@@ -188,9 +188,28 @@ export default function Home() {
           }
           setIsAnalyzing(false);
         } else {
-          const aiAnalysis = await ai.analyzePosition(currentFen);
-          setAnalysis(aiAnalysis);
-          response = aiAnalysis.reasoning;
+          try {
+            const chatHistory = [...messages, userMessage];
+            const chatResponse = await fetch('/api/chat', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ messages: chatHistory, fen: currentFen }),
+            });
+
+            if (chatResponse.ok) {
+              const chatData = await chatResponse.json();
+              response = chatData.response;
+            } else {
+              throw new Error('Gemini API call failed');
+            }
+          } catch (apiError) {
+            console.warn('Gemini chat failed, using local fallback:', apiError);
+            const aiAnalysis = await ai.analyzePosition(currentFen);
+            setAnalysis(aiAnalysis);
+            response = aiAnalysis.reasoning;
+          }
         }
       }
 
@@ -208,7 +227,7 @@ export default function Home() {
   };
 
   const handleClearBoard = () => {
-    setCurrentFen('rnbqkbnr/pppppppp/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
+    setCurrentFen('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
     setAnalysis(undefined);
     setGamePGN('');
     setMessages([

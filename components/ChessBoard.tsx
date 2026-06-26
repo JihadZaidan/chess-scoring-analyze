@@ -21,7 +21,7 @@ export default function ChessBoardComponent({
   onMove,
   onAnalysisRequest,
   onAnalysisReset,
-  initialFen = 'rnbqkbnr/pppppppp/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+  initialFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
   analysis,
   isAnalyzing = false,
   showCoordinates = true,
@@ -30,13 +30,13 @@ export default function ChessBoardComponent({
 }: ChessBoardComponentProps) {
   const [game, setGame] = useState(() => {
     try {
-      return new Chess(initialFen || 'rnbqkbnr/pppppppp/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
+      return new Chess(initialFen || 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
     } catch (error) {
       console.warn('Failed to initialize chess game with FEN:', initialFen, error);
       return new Chess(); // Fallback to standard position
     }
   });
-  const [position, setPosition] = useState(initialFen || 'rnbqkbnr/pppppppp/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
+  const [position, setPosition] = useState(initialFen || 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
   const [arrows, setArrows] = useState<Array<{from: string, to: string, color: string}>>([]);
 
@@ -47,7 +47,7 @@ export default function ChessBoardComponent({
       let validFen = initialFen;
       
       if (!validFen || validFen.trim() === '') {
-        validFen = 'rnbqkbnr/pppppppp/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+        validFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
       }
       
       // Clean up the FEN string
@@ -59,7 +59,7 @@ export default function ChessBoardComponent({
         testGame.load(validFen);
       } catch (fenError) {
         console.warn('Invalid FEN detected, using default:', validFen, fenError);
-        validFen = 'rnbqkbnr/pppppppp/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+        validFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
       }
       
       const newGame = new Chess(validFen);

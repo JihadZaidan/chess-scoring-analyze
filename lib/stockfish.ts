@@ -101,6 +101,10 @@ export class StockfishEngine {
       await this.initialize();
     }
 
+    if (!this.isReady || !this.engine) {
+      throw new Error('Stockfish engine is not initialized');
+    }
+
     return new Promise((resolve, reject) => {
       const startTime = Date.now();
       let bestMove = '';
@@ -186,6 +190,10 @@ export class StockfishEngine {
   }
 
   async getTopMoves(fen: string, numMoves: number = 3): Promise<AnalysisResult[]> {
+    if (!this.isReady || !this.engine) {
+      return [];
+    }
+
     const moves: AnalysisResult[] = [];
     
     for (let i = 0; i < numMoves; i++) {
@@ -212,6 +220,10 @@ export class StockfishEngine {
   }
 
   async analyzeGame(pgn: string): Promise<PositionAnalysis[]> {
+    if (!this.isReady || !this.engine) {
+      return [];
+    }
+
     const chess = new Chess();
     const analyses: PositionAnalysis[] = [];
     
