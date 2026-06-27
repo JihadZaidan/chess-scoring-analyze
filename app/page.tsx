@@ -29,6 +29,7 @@ export default function Home() {
   const [gamePGN, setGamePGN] = useState<string>('');
   const [isChatOpen, setIsChatOpen] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const ai = new GeminiChessAI();
   const lichessAPI = new LichessAPI();
@@ -43,9 +44,11 @@ export default function Home() {
     }
   }, [router]);
 
-  // Auto-scroll to the latest message
+  // Auto-scroll to the latest message (scroll only the chat container, not the whole page)
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
   }, [messages, isLoading]);
 
   const handleLogout = () => {
@@ -278,8 +281,8 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
-        <div className="w-full lg:w-1/2 p-2 sm:p-4 lg:border-r lg:border-gray-800 bg-gray-900 overflow-y-auto relative">
+      <div className="flex flex-col lg:flex-row flex-1 overflow-hidden min-h-0">
+        <div className="w-full lg:w-1/2 p-2 sm:p-4 lg:border-r lg:border-gray-800 bg-gray-900 overflow-hidden relative">
           <div className="flex justify-between items-center mb-2 sm:mb-4">
             <h2 className="text-lg sm:text-xl font-bold text-white">Chess Board</h2>
             <button
@@ -314,7 +317,7 @@ export default function Home() {
           />
         </div>
 
-        <div className={`w-full lg:w-1/2 flex flex-col h-full bg-gray-900 transition-all duration-300 ease-in-out ${isChatOpen ? 'block' : 'hidden lg:block'}`}>
+        <div className={`w-full lg:w-1/2 flex flex-col min-h-0 bg-gray-900 transition-all duration-300 ease-in-out ${isChatOpen ? 'flex' : 'hidden lg:flex'}`}>
           <div className="bg-gray-900 border-b border-gray-800 p-3 sm:p-4 flex-shrink-0">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
               <div className="text-center sm:text-left">
@@ -353,7 +356,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-3 sm:space-y-4 min-h-0">
+          <div ref={chatContainerRef} className="flex-1 overflow-y-auto min-h-0 p-2 sm:p-4 space-y-3 sm:space-y-4" style={{scrollbarWidth: 'thin', scrollbarColor: 'rgba(34,197,94,0.6) rgba(31,41,55,0.5)'}}>
             {messages.map((msg, index) => (
               <div
                 key={index}
