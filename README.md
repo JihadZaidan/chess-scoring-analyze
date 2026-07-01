@@ -32,18 +32,6 @@ The application processes both categorical and continuous data parameters to cal
 
 ---
 
-## 📈 Statistical Methodologies Employed
-
-### 1. Outlier Detection
-To maintain dataset integrity (removing anomalous matches like early resignations or server disconnects), the app applies an Interquartile Range (IQR) filter to match duration and move count:
-$$\text{Lower Bound} = Q_1 - 1.5 \times \text{IQR}$$
-$$\text{Upper Bound} = Q_3 + 1.5 \times \text{IQR}$$
-
-### 2. Regression & Optimization Models
-The engine tests predictive models to gauge whether specific opening accuracy scores reliably forecast net rating gain ($Y$) utilizing ordinary least squares regression:
-$$Y = \beta_0 + \beta_1X + \epsilon$$
-
----
 
 ## 🛠️ Technology Stack
 
